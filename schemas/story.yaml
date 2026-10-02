@@ -1,0 +1,12 @@
+type: Story
+description: A unit of user-visible value.
+
+fields:
+  - name: acceptance_criteria
+    kind: markdown          # body section "## Acceptance criteria"
+    required: false
+
+# Type-level mapping: how the type itself is represented in each spoke.
+# This Plane instance has no native work-item types, so Story is the plain default.
+spoke_mapping:
+  plane: { label: null }

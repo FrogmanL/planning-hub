@@ -1,0 +1,18 @@
+type: Bug
+description: Something that behaves differently from what was intended.
+
+fields:
+  - name: severity
+    kind: enum
+    values: [low, medium, high, critical]
+    required: true
+    # Not mapped to Plane: Plane has no severity field, and `priority` is a base field.
+    # Map severity only where a spoke has a real severity field (e.g. EWM).
+
+  - name: repro_steps
+    kind: markdown          # body section "## Repro steps"
+    required: false
+
+# This Plane instance has no native work-item types, so Bug is a label.
+spoke_mapping:
+  plane: { label: Bug }

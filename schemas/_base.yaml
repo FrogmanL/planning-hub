@@ -1,0 +1,79 @@
+# Fields every ticket has. Type schemas (story.yaml, bug.yaml, ...) only ADD fields.
+# See _meta.md for how fields, kinds and spoke_mapping work.
+version: "0.1"
+
+# Known spokes. spoke_links keys, people.yaml identities and spoke_mapping keys
+# are validated against this list. Add a spoke here when its adapter is started.
+spokes: [plane, ewm, jira, rally]
+
+fields:
+  - name: title
+    kind: string
+    required: true
+    spoke_mapping:
+      plane: { field: name }
+
+  - name: description
+    kind: markdown          # lives in the body under "## Description"
+    required: true
+    spoke_mapping:
+      plane: { field: description_html }
+
+  - name: status
+    kind: enum
+    values: [backlog, todo, in_progress, blocked, in_review, done, cancelled]
+    required: true
+    default: backlog
+    spoke_mapping:
+      # Plane state groups. `blocked` has no group: the Plane step must decide
+      # between a custom state and a label. Until then it is unmapped and
+      # surfaced (never guessed) on pull. `in_review` also pushes to `started`, so a
+      # pull cannot tell it from `in_progress` without a custom Plane state; the
+      # Plane step must decide that too.
+      plane:
+        field: state
+        values: { backlog: backlog, todo: unstarted, in_progress: started, in_review: started, done: completed, cancelled: cancelled }
+
+  - name: priority
+    kind: enum
+    values: [none, low, medium, high, urgent]
+    required: true
+    default: none
+    spoke_mapping:
+      plane: { field: priority, values: { none: none, low: low, medium: medium, high: high, urgent: urgent } }
+
+  - name: assignee
+    kind: person            # a handle from people.yaml, or null
+    required: false
+    spoke_mapping:
+      plane: { field: assignees }
+
+  - name: parent
+    kind: ref               # another ticket's ID, or null. Parent must be pushed before child.
+    required: false
+    spoke_mapping:
+      plane: { field: parent }
+
+  - name: estimate
+    kind: number             # unit is undefined here (points, hours, size-as-number, ...);
+    required: false          # a per-team convention, not enforced by the hub.
+
+  - name: iteration
+    kind: iteration          # a handle from iterations.yaml, or null
+    required: false
+
+  - name: time_spent
+    kind: number             # cumulative total, same unit convention as `estimate`; updated
+    required: false          # by hand as work happens. Not a per-entry work log (see _meta.md
+                              # "Registries" note if per-entry logging is ever needed).
+
+  - name: labels
+    kind: tags                # a list of free-text labels, e.g. [frontend, tech-debt]
+    required: false
+    default: []
+
+  - name: charge_code
+    kind: string              # THE ONE INHERITING FIELD. null/absent means "inherit from the
+    required: false           # nearest ancestor (via `parent`) that has one set" -- NOT "no
+                               # charge." A ticket only has no charge code if the whole chain
+                               # up to its root is unset. See schemas/_meta.md.

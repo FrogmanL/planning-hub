@@ -1,0 +1,10 @@
+# Hub handle -> per-spoke identity. `assignee` on a ticket must be a handle listed here.
+# Keys under a person are `name` plus any spoke from schemas/_base.yaml.
+# Example (uncomment and fill in when the first assignee is needed):
+#
+# people:
+#   me:
+#     name: Your Name
+#     plane: { member_id: "<uuid>" }
+#     ewm: { user_id: "<id>" }
+people: {}

@@ -1,0 +1,10 @@
+# Hub handle -> iteration/sprint identity, mirroring people.yaml. Add an entry each time a
+# new sprint/iteration starts. `iteration` on a ticket must be a handle listed here.
+# `starts`/`ends` are informational only (not validated as dates).
+#
+# iterations:
+#   sprint-24:
+#     name: Sprint 24
+#     starts: 2026-09-22
+#     ends: 2026-10-05
+iterations: {}
